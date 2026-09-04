@@ -43,6 +43,10 @@ highlight:
   wrap: true
   hljs: false
 
+marked:
+  prependRoot: true
+  postAsset: true
+
 index_generator:
   path: ''
   per_page: 10

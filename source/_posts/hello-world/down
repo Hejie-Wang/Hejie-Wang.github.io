@@ -1,0 +1,386 @@
+---
+title: Qt-help
+date: 2025年3月18日16:37:21
+categories: Qt
+---
+
+
+
+# Qt-help
+
+### 1、属性编辑器：
+
+#### 1.1 QWidget:
+
+- `maximumSize` 是指画布的最大尺寸
+
+- `minimumSize`是指画布的最小尺寸
+- `geometry`是指画布的几何尺寸，其中固定了(0,0)和右下角的坐标(X,Y)
+- 从QWidget来看类的继承关系，QPushButton的父类是QWidget，QWidget的父类是QObject
+
+### 2.控件盒子：
+
+#### 2.1 Layouts
+
+是将众多内容整合成一个整体
+
+#### 2.2 Spring
+
+弹簧，占据多余空间
+
+#### 2.3 Buttons
+
+不多说了，
+
+名称更改：在对象和类 
+
+大小更改：在属性；
+
+字体更改：在属性—QWidget—font中进行更改
+
+#### 2.4 Input Widgets
+
+`Line Edit` 可以输入也可以输出
+
+### 3.窗口进行缩放：
+
+
+
+
+
+### 2、信号与槽代码：
+
+#### 2.1 widgets.h
+
+- 基本架构：
+
+  ```cpp
+  #ifndef WIDGET_H
+  #define WIDGET_H
+  
+  #include <QWidget>
+  
+  QT_BEGIN_NAMESPACE
+  namespace Ui {
+  class Widget;
+  }
+  QT_END_NAMESPACE
+  
+  class Widget : public QWidget
+  {
+      Q_OBJECT
+  
+  public:
+      Widget(QWidget *parent = nullptr);	//
+      ~Widget();
+  
+  private:	//非接口函数，变量的声明和定义位置
+      Ui::Widget *ui;
+      Qstring expression;
+  };
+  #endif // WIDGET_H
+  
+  ```
+
+- 在定义非接口函数，变量的声明和定义位置打开文件
+
+
+
+#### 2.2 widgets.cpp
+
+- 基本架构：
+
+  ```cpp
+  #include "widget.h"
+  #include "ui_widget.h"
+  
+  Widget::Widget(QWidget *parent)
+      : QWidget(parent)
+      , ui(new Ui::Widget)
+  {
+      ui->setupUi(this);
+  }
+  
+  Widget::~Widget()
+  {
+      delete ui;
+  }
+  
+  
+  
+  void Widget::on_onepushbutton_clicked()
+  {
+      //键入点击之后事件
+      expression += "1";
+  }
+  
+  ```
+
+- **`ui`指针的用途：**
+
+  1.使用`ui`指针来访问和设置界面上各个组件的初始属性
+
+  2.`ui`指针使得`Widget`能够方便地连接界面组件的信号到相应的槽函数
+
+  3.`ui`指针可以用于访问和操作界面的布局管理器
+
+  ```cpp
+  #include "widget.h"
+  #include "ui_widget.h"
+  
+  Widget::Widget(QWidget *parent)
+      : QWidget(parent)
+     , ui(new Ui::Widget)
+  {
+      ui->setupUi(this);
+  
+      // 使用ui指针设置按钮文本(一用法)，其中pushButton是控件的名称，setText()是函数
+      ui->pushButton->setText("点击我");
+  
+      // 连接按钮的点击信号到槽函数（二用法）
+      connect(ui->pushButton, &QPushButton::clicked, this, &Widget::onPushButtonClicked);
+  }
+  
+  Widget::~Widget()
+  {
+      delete ui;
+  }
+  
+  void Widget::onPushButtonClicked()
+  {
+      // 通过ui指针修改标签的文本
+      ui->label->setText("按钮被点击了");
+  }
+  ```
+
+- **什么时候把什么代码写到什么位置：**
+
+  `Widget::Widget(QWidget *parent)`中：
+
+  1.最先执行的代码块，适合进行一些初始化操作，包括界面组件的初始化、成员变量的初始化、资源的加载
+
+  2.构造函数也是进行信号与槽连接的合适位置，确保在对象创建后能够正确响应各种事件
+
+  槽函数（如`void Widget::on_onepushbutton_clicked()`）中：
+
+  1.响应特定的信号,与特定事件相关的处理逻辑应该写在槽函数中
+
+  2.用户的操作动态更新界面或改变对象的状态
+
+  
+
+字体调整  窗口大小调整 Qstring 在Help文档中查询
+
+- Qt中如何插入图片：QIcon
+
+![image-20250225212828131](https://github.com/Hejie-Wang/blog-image@master/img/202503181639754.png)
+
+- 删除按钮点击：
+
+  ![image-20250225213357943](https://github.com/Hejie-Wang/blog-image@master/img/202503181640139.png)
+
+**1.QlineEdit转到信号与槽**
+
+1.1 选项含义：什么情况下发出信号
+
+​	`textEdited(const QString &text)`当用户通过键盘编辑 `QLineEdit` 中的文本时，会发出这个信号。与 `textChanged` 不同的	是，它只在用户手动编辑时触发，通过代码修改文本不会触发该信号
+
+1.2 执行逻辑：选择信号->创建槽函数->->处理信号实现逻辑【槽函数】 编写连接语句【构造函数】 
+
+​	假设你选择了 `textChanged` 信号，并连接到一个自定义的槽函数 `onLineEditTextChanged`，那么在代码中会有类似以下的连接语	句：（谁发出信号 发出什么信号 谁处理信号 怎么处理信号）
+
+```cpp
+// 在构造函数或初始化代码中
+connect(ui->lineEdit, &QLineEdit::textChanged, this, &YourWidgetClass::onLineEditTextChanged);
+```
+
+​	同时，在你的类中需要有 `onLineEditTextChanged` 槽函数的实现：
+
+```cpp
+void YourWidgetClass::onLineEditTextChanged(const QString &text)
+{
+    // 处理文本改变的逻辑
+    qDebug() << "输入的文本已改变为: " << text;
+}
+```
+
+
+
+**附：转到信号与槽的四种写法**
+
+- 1.右键单击按钮—转到槽，自动转到槽—编写槽函数即可
+
+- 2.自行编写connect函数【选择信号->创建槽函数->->处理信号实现逻辑【槽函数】 编写连接语句【构造函数】 】
+
+  - ```cpp
+    //在构造函数或者初始化代码中	使用宏编写
+    //（谁发出信号 发出什么信号 谁处理信号 怎么处理信号）
+    connect(ui->lineEdit, SIGNAL(returnPressed()), this, SLOT(on_commitButton_clicked));
+    ```
+
+  - ```cpp
+    //在构造函数或者初始化代码中	使用地址编写
+    //（谁发出信号 发出什么信号 谁处理信号 怎么处理信号）
+    connect(ui->cancelButton, &QPushButton::clicked, this, &Widget::on_cancelButton_clicked);
+    ```
+
+- 3.直接在构造函数或者初始化代码中编写：
+
+  ```cpp
+  //适合于代码体积比较小的时候
+  connect(ui->browseButton, &QPushButton::clicked, [this]()
+          {
+              //类 成员函数
+              QMessageBox::information(this, "信息"，"点击浏览");
+          })
+  ```
+
+
+
+**2.Qt中的一些类**
+
+`QPushButton`: The push button, or command button, is perhaps the most commonly used widget in any graphical user interface. Push (click) a button to command the computer to perform some action, or to answer a question. Typical buttons are OK, Apply, Cancel, Close, Yes, No and Help
+
+`QToolButton`: A tool button is a special button that provides quick-access to specific commands or options. As opposed to a normal command button, a tool button usually doesn't show a text label, but shows an icon instead
+
+转到槽之后，查询的就是执行任务的公有函数了，而不是发出信号的控件的公有函数
+
+**3. ui指针的作用**
+
+首先明确ui指针是什么：`ui`指针一般指向一个由`uic`自动生成的类的对象，管理在 Qt Designer 中设计的主窗口、对话框等窗口类【因此也就不能访问非窗口控件】
+
+- 1 访问 UI 设计器中的组件
+
+- 2 修改 UI 组件的属性
+
+- 3 管理 UI 布局
+
+**4.this指针和ui指针的关系**
+
+- 1 this指针是指向调用成员函数的对象的，如果QWidget类创建的对象调用槽函数，this指针就指向该对象
+- 2 ui指针，如上文，只能指向Qt Designer 中设计的窗口类，其他类不能访问，只能使用this来访问
+
+**4.如何在按钮上面显示图片**
+
+```cpp
+ QIcon icon1;  
+  icon1.addFile(":/image/Max.png");//添加图形，将加载进来的资源进行保存  
+  ui->pushButton_4->setMinimumSize(33,33);  
+  ui->pushButton_4->setMaximumSize(33,33); 
+  ui->pushButton_4->setIcon(icon1); 
+  ui->pushButton_4->setIconSize(QSize(28,28));
+```
+
+- 相对路径的写法：
+
+  - 以“./”开头，代表当前目录和文件目录在同一个目录里，“./”也可以省略不写！
+  - 以"../"开头：向上走一级，代表目标文件在当前文件所在的上一级目录；
+  - 以"../../"开头：向上走两级，代表父级的父级目录，也就是上上级目录，再说明白点，就是上一级目录的上一级目录
+  - 以"/”开头，代表根目录
+
+- QIcon类：
+
+- QSize类：
+
+  `QSize(int width, int height)`	：构造函数
+
+  ` int height() const`			     ：返回高
+
+​	`int width() const`			      ：返回宽
+
+​	`int &QSize::rheight()`		      ：返回高的引用，可以直接修改
+
+​	`int &QSize::rwidth()`			：返回宽的引用，可以直接修改
+
+​	`void QSize::setWidth(int width)` ：将宽设定给对象
+
+​	`void QSize::setHeight(int height)`：将高设定给对象
+
+**5.窗口自适应**
+
+- 见属性编辑器（h1），对于图片使用`QImage` `QPixmap` 设置在`label` 中的情况，选择属性编辑器中的`scaledContents` 则可以设置自动适应label窗口
+
+
+
+### 3. Qt中定时器：
+
+#### 两种实现逻辑 ：（1）QObject （2）QTimer
+
+##### 第一种实现逻辑：
+
+- startTimer killTimer 分别控制计时器的开始和结束
+
+```cpp
+int QObject::startTimer(int interval, Qt::TimerType timerType = Qt::CoarseTimer);
+```
+
+- **`interval`**：这是一个 `int` 类型的参数，表示定时器的时间间隔，单位是毫秒（ms）。例如，如果你传入 `1000`，则定时器会每隔 1 秒触发一次定时器事件。
+
+- `timerType`:这是一个`Qt::TimerType `枚举类型的参数，用于指定定时器的精度类型，有以下几种取值：
+
+  - `Qt::PreciseTimer`：精确定时器，尽量保证定时器事件能按照指定的时间间隔精确触发，但可能会消耗更多的系统资源。
+  - `Qt::CoarseTimer`：粗略定时器，定时器事件的触发时间会有一定的误差，误差范围在指定时间间隔的 5% 左右，这种类型比较节省系统资源，是默认值。
+  - `Qt::VeryCoarseTimer`：非常粗略的定时器，定时器事件的触发时间误差更大，主要用于对时间精度要求不高的场景，如定期进行一些系统状态检查等。
+
+  ```cpp
+  void QObject::killTimer(int id);
+  ```
+
+  - **`id`**：这是一个 `int` 类型的参数，表示要停止的定时器的 ID。这个 ID 是之前调用 `startTimer` 函数时返回的。
+
+  
+
+- starttimer时间到 —触发事件—killtimer—消除计时器
+
+  ```cpp
+  void Widget::on_StartButton_clicked()
+  {
+      //开启定时器，返回定时器编号
+      //等待1000ms之后触发事件，一旦开启，持续工作(触发逻辑：event指针连接计时器)
+      myTimerId = this->startTimer(TIMEOUT);
+  }
+  
+  
+  //timerEvent是计时器到时间之后触发的事件（事件在Qt中也是非常重要的概念）
+  //驱动参数为*event可以获取当前计时器的编号，判断是不是指定计时器
+  void Widget::timerEvent(QTimerEvent *event)
+  {
+      if(event->timerId() != myTimerId)
+      	return ;
+      
+      //下面实现代码逻辑
+  }
+  
+  
+  void Widget::on_stopButton_clicked()
+  {
+      this->killTimer(myTimerId);
+  }
+  ```
+
+
+
+**第二种实现逻辑：**
+
+- 使用QImage类加载图片（变量—加载—显示）
+
+![image-20250227215710971](https://github.com/Hejie-Wang/blog-image@master/img/202503181641900.png)
+
+- 设置槽函数（connect函数负责连接到timeout信号）
+
+![image-20250227214542452](https://github.com/Hejie-Wang/blog-image@master/img/202503181642262.png)
+
+- 这里实现QTimer单次的逻辑（ms， 对象指针， const char * slot），这里用宏SLOT实现
+
+![image-20250227215302269](https://github.com/Hejie-Wang/blog-image@master/img/202503181642351.png)
+
+
+
+### 4. MainWindow+文件操作
+
+
+
+
+
+
+

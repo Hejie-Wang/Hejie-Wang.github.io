@@ -8,9 +8,10 @@
   },
   "scripts": {
     "clean": "hexo clean",
-    "generate": "hexo clean && hexo generate",
+    "validate": "node tools/validate-posts.cjs",
+    "generate": "npm run validate && hexo clean && hexo generate",
     "build": "npm run generate",
-    "server": "hexo clean && hexo server"
+    "server": "npm run validate && hexo clean && hexo server"
   },
   "dependencies": {
     "hexo": "7.3.0",
@@ -20,6 +21,7 @@
     "hexo-generator-tag": "^2.0.0",
     "hexo-renderer-marked": "^7.0.0",
     "hexo-server": "^3.0.0",
-    "hexo-theme-butterfly": "5.3.5"
+    "hexo-theme-butterfly": "5.3.5",
+    "js-yaml": "^4.1.0"
   }
 }
