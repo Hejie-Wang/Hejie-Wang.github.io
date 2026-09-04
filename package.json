@@ -1,0 +1,25 @@
+{
+  "name": "hejie-wang-blog",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hexo source for Hejie-Wang.github.io",
+  "hexo": {
+    "version": "7.3.0"
+  },
+  "scripts": {
+    "clean": "hexo clean",
+    "generate": "hexo clean && hexo generate",
+    "build": "npm run generate",
+    "server": "hexo clean && hexo server"
+  },
+  "dependencies": {
+    "hexo": "7.3.0",
+    "hexo-generator-archive": "^2.0.0",
+    "hexo-generator-category": "^2.0.0",
+    "hexo-generator-index": "^4.0.0",
+    "hexo-generator-tag": "^2.0.0",
+    "hexo-renderer-marked": "^7.0.0",
+    "hexo-server": "^3.0.0",
+    "hexo-theme-butterfly": "5.3.5"
+  }
+}
