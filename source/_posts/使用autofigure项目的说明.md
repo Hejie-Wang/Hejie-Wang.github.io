@@ -14,7 +14,7 @@ categories:
 
 ## 项目介绍
 
-![AutoFigure-Edit 项目界面](image.png)
+![AutoFigure-Edit 项目界面](./使用autofigure项目的说明/image.png)
 
 AutoFigure-Edit 是一个在 Github 上的开源项目，能将论文的方法部分自动转化为完全可编辑的 SVG 插图，并支持在嵌入式 SVG 编辑器中进行微调。
 
@@ -32,7 +32,7 @@ AutoFigure-Edit 是一个在 Github 上的开源项目，能将论文的方法�
 
 将原始链接黏贴到输入框中，点击`转换链接`，然后复制转换后的链接。
 
-![GitHub 下载代理页面](image-1.png)
+![GitHub 下载代理页面](./使用autofigure项目的说明/image-1.png)
 
 得到链接如下：
 
@@ -46,7 +46,7 @@ git clone https://v4.gh-proxy.org/https://github.com/ResearAI/AutoFigure-Edit
 
 则远端仓库中的代码会被克隆到本地的 AutoFigure-Edit 文件夹中。如果使用cmd或PowerShell，需要先将git添加到环境变量中，如果没有添加，则可以使用git bash来执行命令。
 
-![克隆项目示例](image-3.png)
+![克隆项目示例](./使用autofigure项目的说明/image-3.png)
 
 (我的由于已经克隆到了本地，因此再次克隆时候会报错，提示`fatal: destination path 'AutoFigure-Edit' already exists and is not an empty directory.`，如果你是第一次克隆，则不会报错。)
 
@@ -100,7 +100,7 @@ INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 
 将浏览器打开，输入网址 <http://127.0.0.1:8000>，就能得到如下界面：
 
-![AutoFigure-Edit 网页端](image-4.png)
+![AutoFigure-Edit 网页端](./使用autofigure项目的说明/image-4.png)
 
 可以看到，这里有两种使用模式，第一种是粘贴论文方法部分的文本，之后项目会走一个pipeline：
 > gpt-image-2 生成图片 -> png2svg 将图片转化为svg -> svg-edit 编辑svg 
@@ -121,17 +121,17 @@ INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 
 点击右上角`创建API密钥`，在弹出的对话框中，输入一个名称，为这个API密钥命名，建议命名为`gpt-image-2`，然后选择分组，在下拉菜单中寻找`gpt_image_2`，选择它，然后点击`保存更改`，其他配置保持默认即可。
 
-![创建 API 密钥](image-5.png)
+![创建 API 密钥](./使用autofigure项目的说明/image-5.png)
 
 之后返回到API密钥管理页面，就能看到刚刚创建的API密钥，点击密钥旁边的按钮，将其复制到剪贴板中。
 
-![复制 API 密钥](image-6.png)
+![复制 API 密钥](./使用autofigure项目的说明/image-6.png)
 
 就完成了OpenAI API Key的获取。
 
 回到AutoFigure-Edit的网页端，将获取的API Key填入，注意上方按钮选择`自定义`，来输入自定义模型提供商。
 
-![填写模型与 API 配置](image-7.png)
+![填写模型与 API 配置](./使用autofigure项目的说明/image-7.png)
 
 其中必要信息如下：
 
@@ -155,7 +155,7 @@ SVG模型：gpt-5.5
 
 micu生图的api需要更改Autofigure-Edit的源码，才能使用gpt-image-2模型。更改`autofigure2.py`中的代码。我会将更改后的代码一同展示，放在结尾附件中。
 
-![需要修改的源码位置](image-8.png)
+![需要修改的源码位置](./使用autofigure项目的说明/image-8.png)
 
 ### Step 4: 获取Roboflow API Key
 
@@ -165,11 +165,11 @@ micu生图的api需要更改Autofigure-Edit的源码，才能使用gpt-image-2�
 
 即可进入 Roboflow 的主界面
 
-![Roboflow 控制台](image-9.png)
+![Roboflow 控制台](./使用autofigure项目的说明/image-9.png)
 
 在左侧栏，选择`Settings`->`API Keys`，进入 API Keys 页面。
 
-![Roboflow API Keys 页面](image-10.png)
+![Roboflow API Keys 页面](./使用autofigure项目的说明/image-10.png)
 
 找到`Private API Key`，复制到剪贴板中。
 
@@ -239,11 +239,11 @@ AlphaGo 的方法主要包括以下几个阶段：
 
 生成效果如图
 
-![AutoFigure 生成效果](figure.png)
+![AutoFigure 生成效果](./使用autofigure项目的说明/figure.png)
 
 说明内置提示词功底很不错，之后生成的png也可以成功转为svg，并且可以在svg编辑器中进行微调。
 
-![SVG 编辑效果](image-11.png)
+![SVG 编辑效果](./使用autofigure项目的说明/image-11.png)
 
 唯一有一个问题，就是生成的svg图像中，由于Roboflow的SAM3模型似乎没有合理配置提示词，导致没有办法很好地分割图像中的不同部分，生成的svg图像中，所有的图像元素都被当作一个整体，无法单独编辑每个元素。我后面再琢磨一下，看看怎么搞这里的更改
 
