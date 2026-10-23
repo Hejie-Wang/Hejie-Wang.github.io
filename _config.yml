@@ -23,7 +23,8 @@ code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
 
-new_post_name: :title.md
+# 新文章按 年/月 归档：hexo new "标题" → source/_posts/2026/09/标题.md
+new_post_name: :year/:month/:title.md
 default_layout: post
 titlecase: false
 external_link:
@@ -32,7 +33,8 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: true
+# 图片统一放在文章同级的 assets/<文章名>/ 下，由 scripts/post-assets.js 挂载
+post_asset_folder: false
 relative_link: false
 future: true
 syntax_highlighter: highlight.js
@@ -44,8 +46,12 @@ highlight:
   hljs: false
 
 marked:
-  prependRoot: true
-  postAsset: true
+  # 不要给相对图片路径加根路径：相对引用由 scripts/post-assets.js 改写成
+  # <文章永久链接>/assets/…，这样首页、归档、RSS 都不会断图。
+  prependRoot: false
+  postAsset: false
+  lazyload: true
+  headerIds: true
 
 index_generator:
   path: ''

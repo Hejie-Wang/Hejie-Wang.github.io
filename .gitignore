@@ -3,4 +3,7 @@ public/
 .deploy_git/
 .hexo-runtime/
 .claude/
+.agents/
+.dsh-acl-recovery/
 db.json
+*.vsix

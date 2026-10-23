@@ -1,0 +1,15 @@
+{
+  // 粘贴/拖入图片时自动落到本文档同级的 assets/<文档名>/，并插入相对链接
+  // Hexo 端由 scripts/post-assets.js 挂载成 /<文章永久链接>/assets/<文档名>/图片名
+  "markdown.copyFiles.destination": {
+    "**/*.md": "assets/${documentBaseName}/${fileName}"
+  },
+  "markdown.validate.enabled": true,
+  "markdown.updateLinksOnFileMove.enabled": "always",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.eol": "\n",
+  "[markdown]": {
+    "editor.wordWrap": "on"
+  }
+}

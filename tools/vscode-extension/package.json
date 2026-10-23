@@ -1,0 +1,81 @@
+{
+  "name": "blog-publisher",
+  "displayName": "博客一键发布",
+  "description": "写完就能发：校验 front matter 与图片、提交、推送到 GitHub，触发 Actions 重新构建 Hexo 博客。",
+  "version": "0.1.0",
+  "publisher": "hejie-wang",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "hexo",
+    "blog",
+    "git",
+    "publish"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "blogPublisher.publish",
+        "title": "博客：一键发布",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "blogPublisher.newPost",
+        "title": "博客：新建文章"
+      },
+      {
+        "command": "blogPublisher.openSite",
+        "title": "博客：打开站点"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "blogPublisher.publish",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "blogPublisher.publish"
+        },
+        {
+          "command": "blogPublisher.newPost"
+        },
+        {
+          "command": "blogPublisher.openSite"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "博客发布",
+      "properties": {
+        "blogPublisher.validateBeforePublish": {
+          "type": "boolean",
+          "default": true,
+          "description": "发布前运行 tools/validate-posts.cjs，检查 front matter 和本地图片引用。"
+        },
+        "blogPublisher.remote": {
+          "type": "string",
+          "default": "origin",
+          "description": "推送使用的 git 远端名。"
+        },
+        "blogPublisher.siteUrl": {
+          "type": "string",
+          "default": "https://hejie-wang.github.io",
+          "description": "「打开站点」使用的地址。"
+        }
+      }
+    }
+  }
+}
