@@ -129,7 +129,7 @@ XeLaTeX → BibTeX → XeLaTeX → XeLaTeX
 
 最后，为了个人学习方便，参考教程，整理了一个pdf文件，有较为齐全的配置方法，供大家参考。
 
-[text](assets/LaTeX_Workshop_编译配置教程.pdf)
+[LaTeX_Workshop_编译配置教程.pdf](assets/LaTeX_Workshop_编译配置教程.pdf)
 
 ## 参考教程
 
