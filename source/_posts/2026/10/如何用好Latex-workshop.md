@@ -127,9 +127,9 @@ XeLaTeX → BibTeX → XeLaTeX → XeLaTeX
 ```
 从而禁用magic comment的功能，避免其覆盖`settings.json`文件中的配置。
 
-最后，为了个人学习方便，参考教程，整理了一个pdf文件，有较为齐全的配置方法，供大家参考。
+最后，为了个人学习方便，参考教程，整理了一个pdf文件，有较为齐全的配置方法，供大家参考。下方可以直接翻页预览，也可以点「新窗口」或「下载」：
 
-[LaTeX_Workshop_编译配置教程.pdf](assets/LaTeX_Workshop_编译配置教程.pdf)
+{% pdf assets/如何用好Latex-workshop/LaTeX_Workshop_编译配置教程.pdf LaTeX Workshop 编译配置教程 %}
 
 ## 参考教程
 

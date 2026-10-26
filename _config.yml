@@ -102,6 +102,12 @@ theme_config:
     page_pv: true
   wordcount:
     enable: false
+  # PDF 预览所需的前端资源（{% pdf %} 标签使用）
+  inject:
+    head:
+      - '<link rel="stylesheet" href="/css/pdf-viewer.css">'
+    bottom:
+      - '<script defer src="/js/pdf-viewer.js"></script>'
 
 deploy:
   type: ''

@@ -54,6 +54,27 @@ categories:
 
 图片会落在 `assets/<当前文档名>/`，并自动插入相对链接，Hexo 端无需额外设置。
 
+## 插入 PDF（页面内预览）
+
+把 PDF 放进同一篇文章的 `assets/<文章名>/` 目录，然后在正文里用 `pdf` 标签：
+
+```markdown
+{% pdf assets/如何用好Latex-workshop/LaTeX_Workshop_编译配置教程.pdf LaTeX Workshop 编译配置教程 %}
+```
+
+第一个参数是文件路径（相对文章目录），第二个参数是默认显示在工具栏里的标题，可省略（省略时用文件名）。
+
+渲染结果是一个带工具栏的翻页预览：
+
+- 工具栏：文件名、总页数、缩小 / 放大 / 适应宽度、新窗口打开、下载
+- 逐页懒渲染：只渲染滚动到附近的页，长文档也不会一次卡住
+- 按需加载：只有页面上真的出现 PDF 时才从 jsDelivr 拉 `pdf.js`（3.11.174 legacy 版），失败时自动回退成浏览器内联 `iframe`
+- 样式与脚本：`source/css/pdf-viewer.css`、`source/js/pdf-viewer.js`，由 `_config.yml` 的 `theme_config.inject` 注入全站
+
+`md` 里也可以继续用普通链接 `[名字](assets/文章名/文件.pdf)`，附件同样会被挂载，只是不会内嵌预览。
+
+支持的附件类型不限：`assets/<文章名>/` 下的图片、PDF、压缩包等都会被复制到 `/<文章永久链接>/assets/<文章名>/` 下，只有 `.md` 会被忽略。
+
 ## 本地预览
 
 ```bash

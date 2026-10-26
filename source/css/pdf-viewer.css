@@ -1,0 +1,122 @@
+/* PDF 预览（{% pdf %} 标签） */
+
+.pdf-preview {
+  margin: 1.6rem 0;
+  border: 1px solid rgba(136, 136, 136, 0.3);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(136, 136, 136, 0.06);
+}
+
+.pdf-preview__toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid rgba(136, 136, 136, 0.25);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.pdf-preview__title {
+  font-weight: 600;
+  max-width: 46%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pdf-preview__pages-count {
+  color: #8a8a8a;
+}
+
+.pdf-preview__spacer {
+  flex: 1 1 auto;
+}
+
+.pdf-preview__toolbar button,
+.pdf-preview__link {
+  font: inherit;
+  color: inherit;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid rgba(136, 136, 136, 0.4);
+  border-radius: 6px;
+  background: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.pdf-preview__toolbar button:hover,
+.pdf-preview__link:hover {
+  border-color: #49b1f5;
+  color: #49b1f5;
+}
+
+.pdf-preview__pages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  max-height: 80vh;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.pdf-preview__page {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.pdf-preview__page canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.pdf-preview__frame {
+  width: 100%;
+  height: 78vh;
+  border: 0;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.pdf-preview__placeholder,
+.pdf-preview__tip {
+  padding: 0.4rem;
+  font-size: 0.85rem;
+  color: #8a8a8a;
+}
+
+.pdf-preview__tip {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+}
+
+.pdf-preview__error {
+  color: #e5534b;
+}
+
+[data-theme="dark"] .pdf-preview__pages {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .pdf-preview__page canvas {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+}
+
+@media (max-width: 768px) {
+  .pdf-preview__title {
+    max-width: 100%;
+  }
+
+  .pdf-preview__pages {
+    max-height: 70vh;
+    padding: 0.5rem;
+  }
+}
