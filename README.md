@@ -106,8 +106,10 @@ npm run server
 ```bash
 cd tools/vscode-extension
 npx @vscode/vsce package
-code --install-extension blog-publisher-0.1.0.vsix
+code --install-extension blog-publisher-0.2.0.vsix --force
 ```
+
+装好后 `Developer: Reload Window`，VS Code 左侧活动栏会出现「博客」图标，里面常驻：发布博客、选择标签和分类、进行校验、新建文章，以及「打开远端网页」分组（站点首页 / 当前文章的线上页面 / GitHub 源码 / Actions / 仓库）。详见 [tools/vscode-extension/README.md](../tools/vscode-extension/README.md)。
 
 ## 历史
 

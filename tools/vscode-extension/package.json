@@ -1,8 +1,8 @@
 {
   "name": "blog-publisher",
   "displayName": "博客一键发布",
-  "description": "写完就能发：校验 front matter 与图片、提交、推送到 GitHub，触发 Actions 重新构建 Hexo 博客。",
-  "version": "0.1.0",
+  "description": "左侧常驻的博客工作台：发布、选标签分类、校验、打开远端页面。",
+  "version": "0.2.0",
   "publisher": "hejie-wang",
   "license": "MIT",
   "engines": {
@@ -22,19 +22,79 @@
     "onStartupFinished"
   ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "blogPublisher",
+          "title": "博客",
+          "icon": "media/blog.svg"
+        }
+      ]
+    },
+    "views": {
+      "blogPublisher": [
+        {
+          "id": "blogPublisher.sidebar",
+          "name": "博客工作台"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "blogPublisher.sidebar",
+        "contents": "还没有打开博客仓库。\n打开 Hejie-Wang.github.io 这个文件夹后，这里会出现发布、标签分类、校验和远端入口。\n[打开文件夹](command:vscode.openFolder)"
+      }
+    ],
     "commands": [
       {
         "command": "blogPublisher.publish",
-        "title": "博客：一键发布",
-        "icon": "$(cloud-upload)"
+        "title": "博客：发布博客",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "blogPublisher.pickTagsAndCategories",
+        "title": "博客：选择标签和分类",
+        "icon": "$(tag)"
+      },
+      {
+        "command": "blogPublisher.validate",
+        "title": "博客：进行校验",
+        "icon": "$(check-all)"
       },
       {
         "command": "blogPublisher.newPost",
-        "title": "博客：新建文章"
+        "title": "博客：新建文章",
+        "icon": "$(new-file)"
       },
       {
         "command": "blogPublisher.openSite",
-        "title": "博客：打开站点"
+        "title": "博客：打开站点首页",
+        "icon": "$(home)"
+      },
+      {
+        "command": "blogPublisher.openCurrentPost",
+        "title": "博客：打开当前文章的线上页面",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "blogPublisher.openSource",
+        "title": "博客：打开当前文章的 GitHub 源码",
+        "icon": "$(github)"
+      },
+      {
+        "command": "blogPublisher.openActions",
+        "title": "博客：打开 Actions 构建记录",
+        "icon": "$(history)"
+      },
+      {
+        "command": "blogPublisher.openRepo",
+        "title": "博客：打开 GitHub 仓库",
+        "icon": "$(repo)"
+      },
+      {
+        "command": "blogPublisher.refresh",
+        "title": "博客：刷新侧边栏",
+        "icon": "$(refresh)"
       }
     ],
     "keybindings": [
@@ -45,15 +105,48 @@
       }
     ],
     "menus": {
+      "view/title": [
+        {
+          "command": "blogPublisher.publish",
+          "when": "view == blogPublisher.sidebar",
+          "group": "navigation@1"
+        },
+        {
+          "command": "blogPublisher.refresh",
+          "when": "view == blogPublisher.sidebar",
+          "group": "navigation@2"
+        }
+      ],
       "commandPalette": [
         {
           "command": "blogPublisher.publish"
+        },
+        {
+          "command": "blogPublisher.pickTagsAndCategories"
+        },
+        {
+          "command": "blogPublisher.validate"
         },
         {
           "command": "blogPublisher.newPost"
         },
         {
           "command": "blogPublisher.openSite"
+        },
+        {
+          "command": "blogPublisher.openCurrentPost"
+        },
+        {
+          "command": "blogPublisher.openSource"
+        },
+        {
+          "command": "blogPublisher.openActions"
+        },
+        {
+          "command": "blogPublisher.openRepo"
+        },
+        {
+          "command": "blogPublisher.refresh"
         }
       ]
     },
@@ -63,7 +156,7 @@
         "blogPublisher.validateBeforePublish": {
           "type": "boolean",
           "default": true,
-          "description": "发布前运行 tools/validate-posts.cjs，检查 front matter 和本地图片引用。"
+          "description": "发布前运行 tools/validate-posts.cjs，检查 front matter 和本地图片/附件引用。"
         },
         "blogPublisher.remote": {
           "type": "string",
@@ -73,7 +166,7 @@
         "blogPublisher.siteUrl": {
           "type": "string",
           "default": "https://hejie-wang.github.io",
-          "description": "「打开站点」使用的地址。"
+          "description": "站点根地址，用于打开站点与拼出当前文章的线上地址。"
         }
       }
     }
