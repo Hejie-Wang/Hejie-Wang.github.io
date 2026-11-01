@@ -5,9 +5,9 @@ updated: 2026-09-04 11:00:00
 author: 王赫杰
 tags:
   - AutoFigure-Edit
-  - 科研工具
+  - Research Tools
 categories:
-  - 工具使用
+  - Research Tools
 ---
 
 # AutoFigure-Edit 说明
@@ -103,9 +103,9 @@ INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 ![AutoFigure-Edit 网页端](assets/使用autofigure项目的说明/image-4.png)
 
 可以看到，这里有两种使用模式，第一种是粘贴论文方法部分的文本，之后项目会走一个pipeline：
-> gpt-image-2 生成图片 -> png2svg 将图片转化为svg -> svg-edit 编辑svg 
+> gpt-image-2 生成图片 -> png2svg 将图片转化为svg -> svg-edit 编辑svg
 第二种是直接上传图片，之后项目会走一个pipeline：
-> png2svg 将图片转化为svg -> svg-edit 编辑svg 
+> png2svg 将图片转化为svg -> svg-edit 编辑svg
 
 这里需要填写两个api key，分别是`OpenAI API Key`和`Roboflow API Key`，如果没有这两个key，则无法使用项目。
 

@@ -6,7 +6,7 @@ author: 王赫杰
 tags:
   - Agent
   - SKILL
-  - 工作流
+  - Workflow
 categories:
   - AI Agent
 ---
