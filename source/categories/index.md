@@ -1,6 +1,9 @@
 ---
 title: 分类
 date: 2025-03-18 16:31:51
-type: categories
 comments: false
 ---
+
+按方向汇总的文章入口：每张卡片用该分类下最新文章的插图做封面，并列出篇数与最近几篇文章，点一下进入这个分类的归档。
+
+{% category_cards %}
