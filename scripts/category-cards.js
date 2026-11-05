@@ -203,25 +203,29 @@ function coverStyle(category, posts) {
 function cardFor(category, posts) {
   const latest = posts[0]
   const name = escapeHtml(category.name)
-  const href = encodeURL(`${rootPath()}${String(category.path || '').replace(/^\/+/, '')}`)
+  const categoryHref = encodeURL(`${rootPath()}${String(category.path || '').replace(/^\/+/, '')}`)
+  // 主点击进文章（卡片展示的就是这篇），分类归档放在底部单独入口
+  const postHref = latest
+    ? encodeURL(`${rootPath()}${String(latest.path || '').replace(/^\/+/, '')}`)
+    : categoryHref
   const date = formatDate(latest && latest.date)
   const latestTitle = escapeHtml((latest && latest.title) || '（无标题）')
   const snippet = latest ? snippetOf(latest) : ''
   const rest = posts.length - 1
 
   return [
-    `<a class="cc-card" href="${href}" title="${name}">`,
-    `  <div class="cc-cover" style="${coverStyle(category, posts)}">`,
+    '<div class="cc-card">',
+    `  <a class="cc-cover" href="${postHref}" title="${latestTitle}" style="${coverStyle(category, posts)}">`,
     `    <span class="cc-count">${posts.length} 篇</span>`,
     `    <span class="cc-name">${name}</span>`,
-    '  </div>',
+    '  </a>',
     '  <div class="cc-body">',
     date ? `    <p class="cc-date">最近更新 ${date}</p>` : '',
-    `    <p class="cc-latest">${latestTitle}</p>`,
+    `    <a class="cc-latest" href="${postHref}" title="${latestTitle}">${latestTitle}</a>`,
     snippet ? `    <p class="cc-snippet">${escapeHtml(snippet)}</p>` : '',
-    rest > 0 ? `    <p class="cc-more">同一分类还有 ${rest} 篇</p>` : '',
+    `    <a class="cc-all" href="${categoryHref}" title="查看 ${name} 分类归档">${name} · 全部 ${posts.length} 篇${rest > 0 ? `（另有 ${rest} 篇）` : ''} →</a>`,
     '  </div>',
-    '</a>'
+    '</div>'
   ]
     .filter(Boolean)
     .join('\n')

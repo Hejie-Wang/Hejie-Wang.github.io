@@ -29,12 +29,14 @@
 }
 
 .cc-cover {
+  display: block;
   position: relative;
   aspect-ratio: 16 / 10;
   background-color: #dfe6ee;
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+  text-decoration: none !important;
 }
 
 .cc-cover::after {
@@ -96,11 +98,17 @@
   font-weight: 600;
   line-height: 1.5;
   color: var(--font-color, #4c4948);
+  text-decoration: none !important;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   overflow-wrap: anywhere;
+  transition: color 0.2s ease;
+}
+
+.cc-latest:hover {
+  color: #49b1f5;
 }
 
 .cc-snippet {
@@ -114,9 +122,20 @@
   overflow: hidden;
 }
 
-.cc-more {
-  margin: 0;
+.cc-all {
+  margin-top: 0.1rem;
   font-size: 0.74rem;
+  color: var(--card-meta, #858585);
+  text-decoration: none !important;
+  border-top: 1px dashed rgba(128, 128, 128, 0.25);
+  padding-top: 0.45rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.cc-all:hover {
   color: #49b1f5;
 }
 
