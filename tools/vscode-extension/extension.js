@@ -19,14 +19,41 @@ let treeView
 
 /* ---------------- 基础工具 ---------------- */
 
+/**
+ * 从某个目录向上找博客仓库根：同时有 .git 与 package.json（hexo 依赖）即为根。
+ * 这样无论 VS Code 打开的是仓库根、source、还是 source/_posts，都能定位正确。
+ */
+function findRepoRoot(start) {
+  let current = path.resolve(start)
+  for (let depth = 0; depth < 10; depth += 1) {
+    const hasGit = fs.existsSync(path.join(current, '.git'))
+    const hasPackage = fs.existsSync(path.join(current, 'package.json'))
+    if (hasGit && hasPackage) return current
+    const parent = path.dirname(current)
+    if (parent === current) break
+    current = parent
+  }
+  return undefined
+}
+
 function safeRoot() {
-  const folder = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0]
-  return folder ? folder.uri.fsPath : undefined
+  const folders = vscode.workspace.workspaceFolders || []
+  for (const folder of folders) {
+    const root = findRepoRoot(folder.uri.fsPath)
+    if (root) {
+      if (path.resolve(root) !== path.resolve(folder.uri.fsPath)) {
+        // 打开的是子目录，记一行便于排查
+        output && output.appendLine(`[i] 工作区 ${folder.uri.fsPath} → 仓库根 ${root}`)
+      }
+      return root
+    }
+  }
+  return folders.length ? folders[0].uri.fsPath : undefined
 }
 
 function workspaceRoot() {
   const root = safeRoot()
-  if (!root) throw new Error('请先打开博客仓库文件夹（File → Open Folder）再运行这个命令。')
+  if (!root) throw new Error('请先打开博客仓库文件夹（或其子目录）再运行这个命令。')
   return root
 }
 
@@ -48,6 +75,17 @@ function run(command, args, cwd) {
 
 const git = (args, cwd) => run('git', args, cwd)
 const runNode = (root, args) => run(process.execPath, args, root)
+
+function validateScript(root) {
+  const script = path.join(root, 'tools', 'validate-posts.cjs')
+  if (!fs.existsSync(script)) {
+    throw new Error(
+      `找不到校验脚本 ${script}（当前判定的仓库根：${root}）。` +
+        '请用 File → Open Folder 打开 Hejie-Wang.github.io 目录或其子目录。'
+    )
+  }
+  return script
+}
 
 const config = () => vscode.workspace.getConfiguration('blogPublisher')
 
@@ -296,7 +334,13 @@ async function publish() {
 
         if (config().get('validateBeforePublish')) {
           progress.report({ message: '校验文章…' })
-          await runNode(root, [path.join('tools', 'validate-posts.cjs')])
+          try {
+            await runNode(root, [validateScript(root)])
+          } catch (error) {
+            output.show(true)
+            await reportValidationFailure(error)
+            return
+          }
         }
 
         const message = await vscode.window.showInputBox({
@@ -346,15 +390,95 @@ async function publish() {
   )
 }
 
+/* 从校验脚本的报错里抽出具体条目（脚本以 "- " 开头列出问题） */
+function validationDetails(error) {
+  const text = `${error.stderr || ''}\n${error.stdout || ''}`
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('- '))
+    .map((line) => line.slice(2))
+}
+
+async function reportValidationFailure(error) {
+  const details = validationDetails(error)
+
+  if (!details.length) {
+    const firstLine = describeError(error).split('\n').filter(Boolean)[0] || '未知错误'
+    vscode.window.showErrorMessage(`校验失败：${firstLine}`)
+    return
+  }
+
+  const head = details.slice(0, 3).join('；')
+  const more = details.length > 3 ? `（共 ${details.length} 处，详见「博客发布」输出面板）` : ''
+  const needsFrontMatter = details.some((item) => /front matter/i.test(item))
+  const actions = needsFrontMatter ? ['补 front matter'] : []
+
+  const choice = await vscode.window.showErrorMessage(`校验失败：${head}${more}`, ...actions)
+  if (needsFrontMatter && choice === '补 front matter') await addFrontMatter()
+}
+
+async function addFrontMatter() {
+  const root = workspaceRoot()
+
+  try {
+    const file = currentPostFile(root) || (await resolveTargetPost(root))
+    if (!file) return
+
+    const document = await vscode.workspace.openTextDocument(file)
+    const text = document.getText()
+    if (frontMatterRange(text)) {
+      vscode.window.showInformationMessage(`${path.basename(file)} 已经有 front matter 了。`)
+      return
+    }
+
+    const stat = fs.statSync(file)
+    const date = new Date(stat.mtimeMs)
+    const pad = (value) => String(value).padStart(2, '0')
+    const stamp =
+      `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+      `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+
+    const header = [
+      '---',
+      `title: ${path.basename(file, '.md')}`,
+      `date: ${stamp}`,
+      `updated: ${stamp}`,
+      `author: ${config().get('author') || '王赫杰'}`,
+      'tags:',
+      'categories:',
+      '---',
+      '',
+      ''
+    ].join('\n')
+
+    const edit = new vscode.WorkspaceEdit()
+    edit.insert(document.uri, new vscode.Position(0, 0), header)
+    if (!(await vscode.workspace.applyEdit(edit))) {
+      vscode.window.showErrorMessage('写入 front matter 失败。')
+      return
+    }
+    await document.save()
+
+    vscode.window.showInformationMessage(
+      `已为 ${path.basename(file)} 补上 front matter（标题按文件名、时间按文件修改时间），记得补 tags / categories。`
+    )
+  } catch (error) {
+    output.show(true)
+    vscode.window.showErrorMessage(`补 front matter 失败：${describeError(error)}`)
+  } finally {
+    refreshSidebar()
+  }
+}
+
 async function validate() {
   const root = workspaceRoot()
   try {
-    await runNode(root, [path.join('tools', 'validate-posts.cjs')])
+    await runNode(root, [validateScript(root)])
     vscode.window.showInformationMessage('校验通过：front matter、图片与附件引用都没问题。')
   } catch (error) {
     output.show(true)
-    const firstLine = describeError(error).split('\n').filter(Boolean)[0] || '校验失败'
-    vscode.window.showErrorMessage(`校验失败：${firstLine}`)
+    await reportValidationFailure(error)
   }
   refreshSidebar()
 }
@@ -437,10 +561,11 @@ async function newPost() {
 
     const hexoBin = path.join(root, 'node_modules', 'hexo', 'bin', 'hexo')
     if (!fs.existsSync(hexoBin)) {
-      vscode.window.showErrorMessage('没找到 hexo，请先在仓库根目录运行 npm install。')
+      vscode.window.showErrorMessage(`没找到 hexo（仓库根：${root}），请先在仓库根目录运行 npm install。`)
       return
     }
 
+    output.appendLine(`[i] hexo new 使用仓库根 ${root}`)
     const result = await run(process.execPath, [hexoBin, 'new', title.trim()], root)
     const created = result.stdout.match(/Created:\s*(.+?\.md)/i)
     const target = created ? path.join(root, created[1].trim().replace(/[\\/]+/g, path.sep)) : (await listPosts(root))[0]
@@ -677,6 +802,7 @@ function activate(context) {
     vscode.commands.registerCommand('blogPublisher.publish', publish),
     vscode.commands.registerCommand('blogPublisher.pickTagsAndCategories', pickTagsAndCategories),
     vscode.commands.registerCommand('blogPublisher.validate', validate),
+    vscode.commands.registerCommand('blogPublisher.addFrontMatter', addFrontMatter),
     vscode.commands.registerCommand('blogPublisher.newPost', newPost),
     vscode.commands.registerCommand('blogPublisher.openSite', openSite),
     vscode.commands.registerCommand('blogPublisher.openCurrentPost', openCurrentPost),

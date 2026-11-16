@@ -2,7 +2,7 @@
   "name": "blog-publisher",
   "displayName": "博客一键发布",
   "description": "左侧常驻的博客工作台：发布、选标签分类、校验、打开远端页面。",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "hejie-wang",
   "license": "MIT",
   "engines": {
@@ -60,6 +60,11 @@
         "command": "blogPublisher.validate",
         "title": "博客：进行校验",
         "icon": "$(check-all)"
+      },
+      {
+        "command": "blogPublisher.addFrontMatter",
+        "title": "博客：补 front matter",
+        "icon": "$(diff-added)"
       },
       {
         "command": "blogPublisher.newPost",
@@ -128,6 +133,9 @@
           "command": "blogPublisher.validate"
         },
         {
+          "command": "blogPublisher.addFrontMatter"
+        },
+        {
           "command": "blogPublisher.newPost"
         },
         {
@@ -167,6 +175,11 @@
           "type": "string",
           "default": "https://hejie-wang.github.io",
           "description": "站点根地址，用于打开站点与拼出当前文章的线上地址。"
+        },
+        "blogPublisher.author": {
+          "type": "string",
+          "default": "王赫杰",
+          "description": "补 front matter 时写入的 author 字段。"
         }
       }
     }
