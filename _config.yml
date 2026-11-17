@@ -102,11 +102,12 @@ theme_config:
     page_pv: true
   wordcount:
     enable: false
-  # 站点自定义样式 / 脚本（PDF 预览、分类卡片）
+  # 站点自定义样式 / 脚本（PDF 预览、分类卡片、数学公式）
   inject:
     head:
       - '<link rel="stylesheet" href="/css/pdf-viewer.css">'
       - '<link rel="stylesheet" href="/css/category-cards.css">'
+      - '<link rel="stylesheet" href="/katex/katex.min.css">'
     bottom:
       - '<script defer src="/js/pdf-viewer.js"></script>'
 
